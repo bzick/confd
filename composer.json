@@ -1,0 +1,17 @@
+{
+    "name": "bzick/confd",
+    "description": "Simple config storage with defaults",
+    "license": "GPLv3",
+	"authors": [{
+		"name": "Ivan Shalganov",
+        "email": "a.cobest@gmail.com"
+    }],
+    "autoload": {
+		"psr-4": {
+			"Confd\\": "src/"
+		}
+	},
+  	"require-dev": {
+		"phpunit/phpunit":  "*"
+	}
+}
