@@ -311,7 +311,7 @@ class Config implements \ArrayAccess {
      *
      * @param string $file
      */
-	public function reload(string $file = '') {
+	public function reload($file = '') {
 	    $file = $file ?: $this->_conf_path;
 	    if (file_exists($file)) {
             foreach (array_keys($this->_main) as $part) {
