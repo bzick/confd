@@ -71,7 +71,7 @@ class Config implements \ArrayAccess {
 		if (isset($this->_main[$part])) {
 			$conf = $this->_main[$part];
 		} else {
-			$conf = [];
+			$conf = array();
 		}
 		if (file_exists($this->_configs_dir.'/'.$part.'.php')) {
 			if ($conf) {
@@ -80,7 +80,7 @@ class Config implements \ArrayAccess {
 				$conf = includeFile($this->_configs_dir.'/'.$part.'.php');
 			}
 		} elseif (!$conf) {
-			return [];
+			return array();
 		}
 		return $this->$part = new \ArrayObject($conf, \ArrayObject::ARRAY_AS_PROPS);
 	}
@@ -109,7 +109,7 @@ class Config implements \ArrayAccess {
 	 * @return array
 	 */
 	public function getAllFrom($path, $basename = true) {
-		$result = [];
+		$result = array();
 		foreach ($this->_main as $k => $v) {
 			if (strpos($k, $path.'/') === 0) {
 				if ($basename && $path.'/'.basename($k) == $k) {
@@ -148,7 +148,7 @@ class Config implements \ArrayAccess {
 		if (file_exists($this->_configs_dir.'/'.$part.'.php')) {
 			return includeFile($this->_configs_dir.'/'.$part.'.php');
 		} else {
-			return [];
+			return array();
 		}
 	}
 
@@ -288,7 +288,7 @@ class Config implements \ArrayAccess {
 		switch (gettype($var)) {
 			case "array":
 				$indx = array_keys($var) === range(0, count($var) - 1);
-				$r = [];
+				$r = array();
 				foreach ($var as $k => $v) {
 					$r[] = "$indent\t" .($indx ? '' : $this->varExport($k) .' => ') .$this->varExport($v, "$indent\t");
 				}

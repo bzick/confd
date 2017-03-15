@@ -32,7 +32,7 @@ class ConfigTest extends TestCase
 
 	public function testLoad() {
 		$this->assertEquals('default value', $this->config->part1->default);
-		$this->assertEquals(['ford', 'hyundai', 'kia'], $this->config->part1->cars);
+		$this->assertEquals(array('ford', 'hyundai', 'kia'), $this->config->part1->cars);
 		$this->assertEquals(1, $this->config->part1->one);
 		$this->assertEquals('two', $this->config->part1->two);
 		$this->assertEquals('pear', $this->config->part1->fruit);
@@ -63,23 +63,23 @@ class ConfigTest extends TestCase
 	}
 
 	public function testFindPath() {
-		$this->assertSame(23.98, $this->config->findPath(['part2', 'planets', 'earth', 'rotation_period']));
+		$this->assertSame(23.98, $this->config->findPath(array('part2', 'planets', 'earth', 'rotation_period')));
 	}
 
 	/**
 	 * @group testGetAllFrom
 	 */
 	public function testGetAllFrom() {
-		$expected = [
-			'parts6' => [
+		$expected = array(
+			'parts6' => array(
 				'part' => 7,
                 'add-part' => 8,
 			    'old-part' => 5,
-			],
-            'part5' => [
+            ),
+            'part5' => array(
 				'deep' => 2
-            ]
-		];
+            )
+        );
 		$this->assertSame($expected, $this->config->getAllFrom('parts', true));
 	}
 
@@ -134,7 +134,7 @@ class ConfigTest extends TestCase
 		// no backup file => no changes
 		$this->assertSame($origin, $this->config->getChanges());
 
-		$data = ['test_key' => 'test_value'];
+		$data = array('test_key' => 'test_value');
 		file_put_contents($bak, "<?php return " . var_export($data, 1) . ";");
 		$this->config->undo();
 		$this->assertSame($data, $this->config->getChanges());
@@ -144,12 +144,12 @@ class ConfigTest extends TestCase
 	 * @covers ::flush
 	 */
 	public function testFlush() {
-		$data1 = [
+		$data1 = array(
 			'int'   => 123,
 			'float' => 123.45,
 			'text'  => 'string',
-			'arr'   => [1,'2.3','four', true],
-		];
+			'arr'   => array(1,'2.3','four', true),
+        );
 		$cnf = __DIR__ . '/var/test_config.php';
 		if (file_exists($cnf)) {
 		    unlink($cnf);
@@ -162,12 +162,12 @@ class ConfigTest extends TestCase
 		$this->assertFalse($config->flush());
 
 		// set new data to config
-		$data2 = [
+		$data2 = array(
 			'int'   => 234,
 			'float' => 234.56,
 			'text'  => 'val',
-			'arr'   => [2,'3.4','five', false],
-		];
+			'arr'   => array(2,'3.4','five', false),
+        );
 		$this->setPrivateProperty('\Confd\Config::_main', $data2, $config);
 
 		$bak = $config->getConfigPath() . ".bak.php";
