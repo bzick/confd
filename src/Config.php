@@ -179,6 +179,7 @@ class Config implements \ArrayAccess {
 	 * @return boolean true on success or false on failure.
 	 * The return value will be casted to boolean if non-boolean was returned.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists($offset) {
 		return isset($this->$offset) || isset($this->_main[$offset]) || file_exists($this->_configs_dir.'/'.$offset.'.php');
 	}
@@ -188,6 +189,7 @@ class Config implements \ArrayAccess {
 	 * @param mixed $offset
 	 * @return mixed Can return all value types.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
 		return $this->$offset;
 	}
@@ -199,6 +201,7 @@ class Config implements \ArrayAccess {
 	 * @throws \LogicException
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet($offset, $value) {
 		if (isset($this->$offset)) {
 			if (is_array($value)) {
@@ -216,6 +219,7 @@ class Config implements \ArrayAccess {
 	 * @param mixed $offset
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset) {
 		unset($this->$offset);
 	}
