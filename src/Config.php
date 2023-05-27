@@ -8,6 +8,10 @@ class Config implements \ArrayAccess {
      * @var array config storage
      */
 	private $_main;
+	/**
+	 * @var array<string, \ArrayObject>
+	 */
+	private $_parts = [];
     /**
      * @var string
      */
@@ -68,6 +72,9 @@ class Config implements \ArrayAccess {
 	 * @return \ArrayObject|array
 	 */
 	public function __get($part) {
+		if (isset($this->_parts[$part])) {
+			return $this->_parts[$part];
+		}
 		if (isset($this->_main[$part])) {
 			$conf = $this->_main[$part];
 		} else {
@@ -82,7 +89,7 @@ class Config implements \ArrayAccess {
 		} elseif (!$conf) {
 			return array();
 		}
-		return $this->$part = new \ArrayObject($conf, \ArrayObject::ARRAY_AS_PROPS);
+		return $this->_parts[$part] = new \ArrayObject($conf, \ArrayObject::ARRAY_AS_PROPS);
 	}
 
 	/**
@@ -181,7 +188,7 @@ class Config implements \ArrayAccess {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetExists($offset) {
-		return isset($this->$offset) || isset($this->_main[$offset]) || file_exists($this->_configs_dir.'/'.$offset.'.php');
+		return isset($this->_parts[$offset]) || isset($this->_main[$offset]) || file_exists($this->_configs_dir.'/'.$offset.'.php');
 	}
 
 	/**
@@ -203,11 +210,12 @@ class Config implements \ArrayAccess {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetSet($offset, $value) {
-		if (isset($this->$offset)) {
-			if (is_array($value)) {
-				$this->$offset = $value + $this->$offset;
-			} else {
-				throw new \LogicException('Unexpected type '.gettype($value).', expected array');
+		if (isset($this->_parts[$offset])) {
+			if (!is_array($value)) {
+				throw new \LogicException('Unexpected type ' . gettype($value) . ', expected array');
+			}
+			foreach ($value as $k => $v) {
+				$this->_parts[$offset][$k] = $v;
 			}
 		} else {
 			$this->_main[$offset] = $value;
@@ -221,7 +229,7 @@ class Config implements \ArrayAccess {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset) {
-		unset($this->$offset);
+		unset($this->_parts[$offset]);
 	}
 
 	/**
@@ -232,7 +240,7 @@ class Config implements \ArrayAccess {
 	 */
 	public function set($part, $key, $value) {
 		$this->_main[$part][$key] = $value;
-		unset($this->$part);
+		unset($this->_parts[$part]);
 	}
 
 	/**
@@ -319,8 +327,11 @@ class Config implements \ArrayAccess {
 	    $file = $file ?: $this->_conf_path;
 	    if (file_exists($file)) {
             foreach (array_keys($this->_main) as $part) {
-                unset($this->$part);
+                unset($this->_parts[$part]);
                 unset($this->_main[$part]);
+            }
+            foreach (array_keys($this->_parts) as $part) {
+                unset($this->_parts[$part]);
             }
             $this->_main = includeFile($file);
         }
